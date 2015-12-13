@@ -191,7 +191,10 @@ function createApi(language) {
 			}
 			return result;
 		},
-		validate: function (data, schema, checkRecursive, banUnknownProperties, resolveRefs = true) {
+		validate: function (data, schema, checkRecursive, banUnknownProperties, resolveRefs) {	// = true
+			if(resolveRefs === undefined) {
+				resolveRefs = true;
+			}
 			var def = defaultErrorReporter(currentLanguage);
 			var errorReporter = customErrorReporter ? function (error, data, schema) {
 				return customErrorReporter(error, data, schema) || def(error, data, schema);
@@ -200,7 +203,9 @@ function createApi(language) {
 			if (typeof schema === "string") {
 				schema = {"$ref": schema};
 			}
-			if(resolveRefs) context.addSchema("", schema);
+			if(resolveRefs) {
+				context.addSchema("", schema);
+			}
 			var error = context.validateAll(data, schema, null, null, "");
 			if (!error && banUnknownProperties) {
 				error = context.banUnknownProperties(data, schema);
